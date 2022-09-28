@@ -1,0 +1,27 @@
+server {
+    listen ${VIRTUAL_PORT};
+
+    server_name ${PROJECT_URL};
+
+    index index.php index.html;
+
+    error_log  /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+
+    root ${PROJECT_ROOT};
+
+    location ~ \.php$ {
+        try_files $${DIRTY_HACK}uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass app:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $${DIRTY_HACK}document_root$${DIRTY_HACK}fastcgi_script_name;
+        fastcgi_param PATH_INFO $${DIRTY_HACK}fastcgi_path_info;
+    }
+
+    location / {
+        try_files $${DIRTY_HACK}uri $${DIRTY_HACK}uri/ /index.php?$${DIRTY_HACK}query_string;
+        gzip_static on;
+    }
+}
